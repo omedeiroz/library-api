@@ -18,7 +18,9 @@ public class BookController {
     @Autowired
     private BookService bookService;
 
-    @GetMapping
+
+
+    @GetMapping   
     public List<Book> getAllBooks() {
         return bookService.getAllBooks();
     }
@@ -37,6 +39,9 @@ public class BookController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book book) {
+        
+        // Tratar com exceção
+        
         try {
             Book updatedBook = bookService.updateBook(id, book);
             return ResponseEntity.ok(updatedBook);
