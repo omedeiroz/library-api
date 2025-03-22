@@ -1,8 +1,10 @@
 package com.libraryApi.service;
 
 import com.libraryApi.Enum.BookGenre;
+import com.libraryApi.dto.BookDTO;
 import com.libraryApi.model.Book;
 import com.libraryApi.repository.BookRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,21 +25,22 @@ public class BookService {
         return bookRepository.findById(id);
     }
 
-    public Book saveBook(Book book) {
-        return bookRepository.save(book);
+    public Book saveBook(BookDTO book) {
+        Book bookSave = new Book();
+        BeanUtils.copyProperties(book , bookSave, "id");
+        return bookRepository.save(bookSave);
     }
 
-    public void deleteBook(Long id) {
+    public Book deleteBook(Long id) {
+        Book bookReturn = bookRepository.findById(id).orElse(null);
         bookRepository.deleteById(id);
+        return bookReturn;
     }
 
-    public Book updateBook(Long id, Book book) {
-        if (bookRepository.existsById(id)) {
-            book.setId(id);
-            return bookRepository.save(book);
-        } else {
-            throw new RuntimeException("Book not found");
-        }
+    public Book updateBook(Long id, BookDTO book) {
+        var bookUpdate = getBookById(id).orElseThrow();
+        BeanUtils.copyProperties(book , bookUpdate, "id");
+        return bookRepository.save(bookUpdate);
     }
 
     public List<Book> getBooksByGenre(BookGenre genre) {
